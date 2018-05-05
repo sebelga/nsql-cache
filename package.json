@@ -5,8 +5,7 @@
     "main": "index.js",
     "scripts": {
         "commit": "git-cz",
-        "local-datastore":
-            "rimraf ./local-datastore && gcloud beta emulators datastore start --data-dir=$PWD/local-datastore",
+
         "lint": "eslint ./lib && eslint ./test",
         "pretest": "npm run lint",
         "prettier": "prettier --write \"{lib,test}/**/*.js\"",
