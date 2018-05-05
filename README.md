@@ -2,7 +2,7 @@
 https://raw.githubusercontent.com/dbader/readme-template/master/README.md
 -->
 
-# Nsql Cache [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Add%20a%20cache%20layer%20for%20the%20Google%20Datastore%20with%20gstore-cache%20%23Datastore%20https%3A%2F%2Fgithub.com%2Fsebelga%2Fgstore-cache)
+# Nsql Cache [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Advanced%20cache%20layer%20for%20NoSQL%20databases!%20https%3A%2F%2Fgithub.com%2Fsebelga%2Fnsql-cache)
 
 > Advanced Cache Layer for NoSQL databases
 
