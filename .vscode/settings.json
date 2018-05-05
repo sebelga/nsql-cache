@@ -1,0 +1,5 @@
+{
+    "editor.formatOnSave": true,
+    "editor.rulers": [120],
+    "javascript.format.enable": false
+}
