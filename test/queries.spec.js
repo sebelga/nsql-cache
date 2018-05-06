@@ -677,7 +677,7 @@ describe('gstoreCache.queries', () => {
         });
     });
 
-    describe('clearQueriesEntityKind', () => {
+    describe('clearQueriesByKind', () => {
         const NsqlCache = requireUncached('../lib');
 
         beforeEach(() => {
@@ -707,7 +707,7 @@ describe('gstoreCache.queries', () => {
 
             sinon.stub(redisClient, 'del').callsFake((keys, cb) => cb(null, 7));
 
-            return cache.queries.clearQueriesEntityKind(['User', 'Posts']).then(res => {
+            return cache.queries.clearQueriesByKind(['User', 'Posts']).then(res => {
                 assert.ok(redisClient.multi.called);
                 assert.ok(redisClient.del.called);
                 const { args: argsMulti } = redisClient.multi.getCall(0);
@@ -727,7 +727,7 @@ describe('gstoreCache.queries', () => {
             const error = new Error('Houston we really got a problem');
             sinon.stub(redisClient, 'multi').callsFake(() => ({ exec: cb => cb(error) }));
 
-            cache.queries.clearQueriesEntityKind('User').catch(err => {
+            cache.queries.clearQueriesByKind('User').catch(err => {
                 expect(err).equal(error);
 
                 redisClient.multi.restore();
@@ -742,7 +742,7 @@ describe('gstoreCache.queries', () => {
                 cb(error);
             });
 
-            cache.queries.clearQueriesEntityKind('User').catch(err => {
+            cache.queries.clearQueriesByKind('User').catch(err => {
                 expect(err).equal(error);
                 redisClient.del.restore();
                 done();
@@ -752,7 +752,7 @@ describe('gstoreCache.queries', () => {
         it('should resolve with an Error if no Redis client', done => {
             cache = new NsqlCache({ db: dbAdapter(), config: { wrapClient: false } });
 
-            cache.queries.clearQueriesEntityKind('EntiyKind').then(err => {
+            cache.queries.clearQueriesByKind('EntiyKind').then(err => {
                 expect(err.message).equal('No Redis Client found.');
                 expect(err.code).equal('ERR_NO_REDIS');
                 done();

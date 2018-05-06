@@ -615,7 +615,7 @@ const fetchHomeData = () => {
 };
 ```
 
-#### `clearQueriesEntityKind(entityKind|Array<EntityKind>)`
+#### `clearQueriesByKind(entityKind|Array<EntityKind>)`
 
 Delete all the queries _linked_ to one or several Entity Kinds.
 
@@ -626,7 +626,7 @@ const data = { title: 'My new post', text: 'Body text of the post' };
 datastore.save({ key, data })
     .then(() => {
         // Invalidate all the queries linked to "Posts" Entity Kinds.
-        cache.queries.clearQueriesEntityKind(['Posts'])
+        cache.queries.clearQueriesByKind(['Posts'])
             .then(() => {
                 ...
             });
