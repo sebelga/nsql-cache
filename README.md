@@ -13,16 +13,14 @@ https://raw.githubusercontent.com/dbader/readme-template/master/README.md
 <img title="logo" src="logo/logo.gif" width="85%" align="center">
 
 [**Installation**](#installation) |
-[**Usage**](#usage) |
-[**Advanced**](#advanced-usage-cache-not-managed) |
 [**API**](#api) |
 [**Support**](../../issues)
 
-nsql-cache speeds up entities fetching by providing a cache layer for NoSQL database clients. It is database agnostic and currently has the following db adapters:
+nsql-cache is an advanced cache layer for NoSQL database clients. It is vendor agnostic and currently has the following database adapters:
 
 - [nsql-cache-datastore](https://github.com/sebelga/nsql-cache-datastore) for the Google Datastore
 
-See the [Medium article](https://medium.com/p/ffb402cd0e1c/edit) for an in-depth overview of this library.
+<!-- See the [Medium article](https://medium.com/p/ffb402cd0e1c/edit) for an in-depth overview of this library. -->
 
 ## Highlight
 
@@ -34,37 +32,27 @@ See the [Medium article](https://medium.com/p/ffb402cd0e1c/edit) for an in-depth
 
 ## Installation
 
+To create a nsql-cache instance, we need to provide a **database adapter**. In the examples here we will use the Google Datastore adapter.
+
 ```sh
-npm install nsql-cache --save
+npm install nsql-cache nsql-cache-datastore --save
 # or
-yarn add nsql-cache
+yarn add nsql-cache nsql-cache-datastore
 ```
 
-
-## Usage
-
-### Default (managed)
-
-By default nsql-cache **wraps** the database client to automatically manage the cache for you. If you have specific needs and you prefer to manage the cache yourself, look at the [advanced section below](#advanced-usage-cache-not-managed).  
-
-To create an instance of the cache you need to create a database adapter and pass it to the instance constructor.
+## Create a cache instance
 
 ```js
 // ----------------------------
 // Google Datastore example
 // ----------------------------
-
-// db.js
-
 const Datastore = require('@google-cloud/datastore');
 const NsqlCache = require('nsql-cache');
 const dsAdapter = require('nsql-cache-datastore');
 
-const datastore = new Datastore({ ...your config });
-const db = dsAdapter(datastore);
-const cache = new NsqlCache({ db });
-
-module.exports = { datastore, cache };
+const datastore = new Datastore(); // Google Datastore client
+const db = dsAdapter(datastore); // Nsql database adapter
+const cache = new NsqlCache({ db }); // Nsql cache instance
 ```
 
 Great! You now have a LRU memory cache with the following configuration:
@@ -75,7 +63,7 @@ Great! You now have a LRU memory cache with the following configuration:
 
 #### Configuration
 
-You can pass a configuration object when creating the cache instance.
+To change the default TTL you can pass a configuration object when creating the cache instance.
 
 ```js
 const cache = new NsqlCache({
@@ -91,14 +79,37 @@ const cache = new NsqlCache({
 
 For the complete configuration options, please refer to the [API documentation](#api) below.
 
+### Wrap database client
+
+By default, _if_ the database adapter supports it, nsql-cache will wrap the database client in order to fully manage the cache for you.  
+If you don't want the database client to be wrapped, disable it in the configuration.  You are then responsible to manage the cache.  Look at the examples in the [nsql-cache-datastore](https://github.com/sebelga/nsql-cache-datastore#advanced-usage-cache-not-managed) repository to see how to manage the cache yourself.
+
+```js
+const cache = new NsqlCache({
+    db,
+    config: {
+        ...
+        wrapClient: false,
+    }
+});
+```
+
+### Core concepts
+
+nsql-cache is based on the core concepts of NoSQL database data agregation. As there are no JOIN operation expanding over multiple tables, the only two ways to fetch entities are:
+- by **Key(s)** - the fastest way to retrieve entity(ies) from the database
+- by **Query** - on a single entity _type_. ex: `SELECT * from Posts (type) FILTER type=tech`
+
+
 #### Queries
 
 As you might have noticed in the default configuration above, queries have a very short TTL (5 seconds). This is because as soon as we create, update or delete an entity, any query that we have cached might be out of sync.  
-Depending on the usecase, 5 seconds might be acceptable or not. Remember that you can always disable the cache or lower the TTL on specific queries. You might decide that you never want queries to be cached, in such case set the global TTL configuration for queries to **-1**. But there is a better way: using **multi cache stores**.
+Depending on the use cases, 5 seconds might be acceptable or not. Remember that you can always disable the cache or lower the TTL on specific queries. You might also decide that you never want the queries to be cached, in such case set the global TTL value for queries to **-1**. 
+But there is a better way: providing a **_Redis_ client**.
 
 #### Multi cache stores
 
-nsql-cache uses the [node-cache-manager](https://github.com/BryanDonovan/node-cache-manager) library to handle the cache. This means that you can have **multiple cache store** with different TTL on each one. The most interesting one for us is the `cache-manager-redis-store` as it supports `mget()` and  `mset()` which is perfect for our _batch_ operations (get() and save()).  
+nsql-cache uses the [node-cache-manager](https://github.com/BryanDonovan/node-cache-manager) library to handle the cache. This means that you can have **multiple cache store** with different TTL on each one. The most interesting one for us is the `cache-manager-redis-store` as it is a Redis client that supports `mget()` and  `mset()` which is what we need for our _batch_ operations (get, save, delete multiple keys).  
 
 First, add the dependency to your package.json
 
@@ -108,7 +119,7 @@ npm install cache-manager-redis-store --save
 yarn add cache-manager-redis-store
 ```
 
-Then pass it to the nsql-cache instance.
+Then provide the cache store to the nsql-cache constructor.
 
 ```js
 ...
@@ -131,14 +142,15 @@ const cache = new NsqlCache({
 })
 ```
 
-You now have 2 cache stores with different TTL values in each one.  
+We now have _two_ cache stores with different TTL values in each one.  
 
 - memory store: ttl keys = 5 minutes, ttl queries = 5 seconds
-- redis store: ttl keys = 1 day, ttl queries = infinite (0)
+- redis store: ttl keys = 1 day, ttl queries = **infinite** (0)
 
 > If you only wants the Redis cache, remove the memory store from the array.
 
-Infinite cache for queries? Yes! nsql-cache keeps a reference of each query by Entity _Kind_ in a Redis _**Set**_ so it can invalidate the cache when an entity of the same Kind is either added, updated or deleted.  For more information on this read the [Medium article](https://medium.com/p/ffb402cd0e1c/edit).
+Infinite cache for queries? Yes! nsql-cache keeps a reference of each query by Entity _Kind_ in a Redis _**Set**_ so it can **invalidate the cache** when an entity of the same _Kind_ is added, updated or deleted.
+<!-- For more information on this read the [Medium article](https://medium.com/p/ffb402cd0e1c/edit). -->
 
 You can of course change the default TTL for each store:
 
@@ -154,8 +166,8 @@ const cache = new NsqlCache({
     config: {
         ttl: {
             memory: {
-                keys: 60 * 60,
-                queries: 30
+                keys: 60 * 60, // 1 hour
+                queries: 30 // 30 seconds
             },
             redis: {
                 keys: 60 * 60 * 48,
@@ -165,31 +177,6 @@ const cache = new NsqlCache({
     }
 })
 ```
-
-## Advanced usage (cache not managed)
-
-If you don't want the database client to be wrapped, you can disable the behaviour.  
-You are then responsible to add and remove data to/from the cache. Let see how you can achieve that...  
-First, disable the client wrap:
-
-```js
-const Datastore = require('@google-cloud/datastore');
-const NsqlCache = require('nsql-cache');
-const dsAdapter = require('nsql-cache-datastore');
-
-const datastore = new Datastore();
-const db = dsAdapter(datastore);
-const cache = gstoreCache.init({
-    db,
-    config: {
-        wrapClient: false
-    }
-});
-
-module.exports = { datastore, cache };
-```
-
-You are now responsible to manage the cache.  To see some example on how to do it, have a look at the [nsql-cache-datastore](https://github.com/sebelga/nsql-cache-datastore#advanced-usage-cache-not-managed) repository.
 
 ---
 
@@ -205,14 +192,14 @@ You are now responsible to manage the cache.  To see some example on how to do i
     * **stores**: an Array of _cache-manager_ stores stores (optional)
     * **config**: an object of configuration (optional)
 
-Note on stores: Each store is an object that will be passed to the `cacheManager.caching()` method. [Read the docs](https://github.com/BryanDonovan/node-cache-manager) to learn more about _node cache manager_.  
+Note on stores: Each store is an object that will be passed to the `cacheManager.caching()` method. [Read the docs](https://github.com/BryanDonovan/node-cache-manager) to learn more about node cache manager.  
 
   **Important:** Since version 2.7.0, cache-manager supports `mset()`, `mget()` and `del()` for **multiple keys** batch operation. The store(s) you provide here must support this feature.  
   At the time of this writting only the "memory" store and the "[node-cache-manager-redis-store](https://github.com/dabroek/node-cache-manager-redis-store)" support it.  
   If you provide a store that does not support mset/mget you can still use nsql-cache but you won't be able to set or retrieve multiple keys/queries in batch.
 
 
-The **config** object has the following properties (showing default values):
+The **config** object has the following properties (showing _default_ values):
 
 ```js
 const config = {
@@ -247,7 +234,7 @@ const config = {
 
 ### cache.keys
 
-#### `read(key|Array<key> [options, fetchHandler]])`
+#### `read(key|Array<key> [, options, fetchHandler]])`
 
 Helper that will:
 - check the cache
