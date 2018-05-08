@@ -218,15 +218,23 @@ const config = {
             queries: 0, // infinite
         },
     },
-    // prefix for the cache keys generated
+
+    // prefix for the keys generated for the cache
     cachePrefix: {
         keys: 'gck:',
         queries: 'gcq:',
     },
-    // wrap or not the @google-cloud/datastore client
+
+    // wrap or not the database client (must be supported by the database adapter)
     wrapClient: true,
+
     // hash the stringified cache keys
     hashCacheKeys: true,
+
+    // global is **only** for client that have been wrapped. It turns "ON" the cache globally
+    // If you set it to false, you will need to pass an option object to each
+    // request to activate the cache. --> { cache: true }
+    global: true,
 };
 ```
 
