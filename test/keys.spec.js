@@ -12,7 +12,7 @@ const StoreMock = require('./mocks/cache-store');
 
 const { expect, assert } = chai;
 
-describe('gstoreCache.keys', () => {
+describe('nsqlCache.keys', () => {
     let cache;
     let cacheManager;
     let keyToString;
