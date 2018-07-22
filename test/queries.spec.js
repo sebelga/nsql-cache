@@ -16,7 +16,7 @@ const metaQuery = {
     moreResults: 'MORE_RESULTS_AFTER_LIMIT',
 };
 
-describe('gstoreCache.queries', () => {
+describe('nsqlCache.queries', () => {
     let cache;
     let queryToString;
     let cacheManager;
@@ -98,6 +98,16 @@ describe('gstoreCache.queries', () => {
             return cache.queries.read(query1, { cache: true }, methods.fetchHandler).then(result => {
                 expect(methods.fetchHandler.called).equal(false);
                 expect(result[0].name).equal(queryRes[0].name);
+            });
+        });
+
+        it('should put back Symbol keys on entities', () => {
+            const myKey = { id: 123456789 };
+            queryRes[0][0].__dsKey__ = myKey;
+            cacheManager.set(queryToString(query1), queryRes);
+
+            return cache.queries.read(query1).then(result => {
+                expect(result[0][0].__key).equal(myKey);
             });
         });
 

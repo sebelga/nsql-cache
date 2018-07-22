@@ -1,77 +1,69 @@
 {
-  "name": "nsql-cache",
-  "version": "1.1.0",
-  "description": "Advanced cache layer for NoSQL databases",
-  "main": "index.js",
-  "scripts": {
-    "commit": "git-cz",
-    "lint": "eslint ./lib && eslint ./test",
-    "pretest": "npm run lint",
-    "prettier": "prettier --write \"{lib,test}/**/*.js\"",
-    "test": "mocha test --recursive --exit",
-    "e2e-test": "DATASTORE_EMULATOR_HOST=localhost:8081 mocha test/e2e.spec.js --recursive --e2e",
-    "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec --recursive --exit",
-    "coveralls": "istanbul cover _mocha --report lcovonly -- -R spec --recursive --exit && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
-    "prerelease": "npm run test",
-    "release": "standard-version"
-  },
-  "pre-commit": [
-    "prettier"
-  ],
-  "engines": {
-    "node": ">=6.0"
-  },
-  "keywords": [
-    "cache",
-    "google datastore",
-    "gcloud node",
-    "google app engine",
-    "nodejs"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/sebelga/nsql-cache.git"
-  },
-  "author": "Sébastien Loix",
-  "license": "MIT",
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
+    "name": "nsql-cache",
+    "version": "1.1.0",
+    "description": "Advanced cache layer for NoSQL databases",
+    "main": "index.js",
+    "scripts": {
+        "commit": "git-cz",
+        "lint": "eslint ./lib && eslint ./test",
+        "pretest": "npm run lint",
+        "prettier": "prettier --write \"{lib,test}/**/*.js\"",
+        "test": "mocha test --recursive --exit",
+        "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec --recursive --exit",
+        "coveralls":
+            "istanbul cover _mocha --report lcovonly -- -R spec --recursive --exit && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+        "prerelease": "npm run test",
+        "release": "standard-version"
+    },
+    "pre-commit": ["prettier"],
+    "engines": {
+        "node": ">=6.0"
+    },
+    "keywords": ["cache", "google datastore", "gcloud node", "google app engine", "nodejs"],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/sebelga/nsql-cache.git"
+    },
+    "author": "Sébastien Loix",
+    "license": "MIT",
+    "config": {
+        "commitizen": {
+            "path": "./node_modules/cz-conventional-changelog"
+        }
+    },
+    "bugs": {
+        "url": "https://github.com/sebelga/nsql-cache/issues"
+    },
+    "homepage": "https://github.com/sebelga/nsql-cache#readme",
+    "dependencies": {
+        "arrify": "^1.0.1",
+        "cache-manager": "^2.9.0",
+        "extend": "^3.0.1"
+    },
+    "devDependencies": {
+        "babel-cli": "^6.26.0",
+        "babel-preset-es2015": "^6.24.1",
+        "cache-manager-redis-store": "^1.4.0",
+        "chai": "^3.5.0",
+        "commitizen": "^2.9.6",
+        "coveralls": "^3.0.1",
+        "cz-conventional-changelog": "^2.1.0",
+        "eslint": "^4.19.0",
+        "eslint-config-airbnb-base": "^12.1.0",
+        "eslint-config-prettier": "^2.9.0",
+        "eslint-import-resolver-webpack": "^0.9.0",
+        "eslint-plugin-import": "^2.11.0",
+        "eslint-plugin-mocha": "^4.11.0",
+        "eslint-plugin-prettier": "^2.6.0",
+        "istanbul": "^0.4.5",
+        "mocha": "^5.1.1",
+        "mocha-lcov-reporter": "^1.3.0",
+        "pre-commit": "1.2.2",
+        "prettier": "1.12.1",
+        "redis-mock": "^0.21.0",
+        "require-uncached": "1.0.3",
+        "sinon": "^4.2.0",
+        "standard-version": "^4.3.0",
+        "yargs": "11.0.0"
     }
-  },
-  "bugs": {
-    "url": "https://github.com/sebelga/nsql-cache/issues"
-  },
-  "homepage": "https://github.com/sebelga/nsql-cache#readme",
-  "dependencies": {
-    "arrify": "^1.0.1",
-    "cache-manager": "^2.9.0",
-    "extend": "^3.0.1"
-  },
-  "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-preset-es2015": "^6.24.1",
-    "cache-manager-redis-store": "^1.4.0",
-    "chai": "^3.5.0",
-    "commitizen": "^2.9.6",
-    "coveralls": "^3.0.1",
-    "cz-conventional-changelog": "^2.1.0",
-    "eslint": "^4.19.0",
-    "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-config-prettier": "^2.9.0",
-    "eslint-import-resolver-webpack": "^0.9.0",
-    "eslint-plugin-import": "^2.11.0",
-    "eslint-plugin-mocha": "^4.11.0",
-    "eslint-plugin-prettier": "^2.6.0",
-    "istanbul": "^0.4.5",
-    "mocha": "^5.1.1",
-    "mocha-lcov-reporter": "^1.3.0",
-    "pre-commit": "1.2.2",
-    "prettier": "1.12.1",
-    "redis-mock": "^0.21.0",
-    "require-uncached": "1.0.3",
-    "sinon": "^4.2.0",
-    "standard-version": "^4.3.0",
-    "yargs": "11.0.0"
-  }
 }
