@@ -82,6 +82,21 @@ describe('nsqlCache.queries', () => {
             });
         });
 
+        it('should get query from fetchHandler when "null" returned from cache', () => {
+            const strQuery = queryToString(query1);
+            sinon.stub(cache.cacheManager, 'get').resolves(null);
+            sinon.spy(cache, 'primeCache');
+
+            return cache.queries.read(query1, methods.fetchHandler).then(result => {
+                expect(methods.fetchHandler.called).equal(true);
+                expect(result).equal(queryRes);
+                expect(cache.primeCache.getCall(0).args[0]).equal(strQuery);
+
+                cache.primeCache.restore();
+                cache.cacheManager.get.restore();
+            });
+        });
+
         it('should get query from cache (1)', () => {
             cacheManager.set(queryToString(query1), queryRes);
 

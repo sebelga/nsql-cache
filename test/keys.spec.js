@@ -65,15 +65,19 @@ describe('nsqlCache.keys', () => {
             });
         });
 
-        it('should get entity from fetchHandler', () => {
+        it('should get entity from fetchHandler and prime the cache', () => {
             sinon.stub(methods, 'fetchHandler').resolves([entity3]);
+            const { primeCache } = cache;
+            sinon.stub(cache, 'primeCache').callsFake(
+                (...args) => primeCache.call(cache, ...args).then(() => 'OK') // simulate response from Redis "OK"
+            );
 
             return cache.keys.read(key3, methods.fetchHandler).then(result => {
                 expect(methods.fetchHandler.called).equal(true);
-                expect(result.name).equal('Carol');
+                expect(result[0].name).equal('Carol');
 
                 return cacheManager.get(keyToString(key3)).then(cacheResponse => {
-                    expect(cacheResponse.name).equal('Carol');
+                    expect(cacheResponse[0].name).equal('Carol');
                 });
             });
         });
@@ -99,10 +103,10 @@ describe('nsqlCache.keys', () => {
 
             return cache.keys.read(key3, { cache: true }).then(result => {
                 expect(cache.db.getEntity.called).equal(true);
-                expect(result.name).equal('Carol');
+                expect(result[0].name).equal('Carol');
 
                 return cacheManager.get(keyToString(key3)).then(cacheResponse => {
-                    expect(cacheResponse.name).equal('Carol');
+                    expect(cacheResponse[0].name).equal('Carol');
                     cache.db.getEntity.restore();
                 });
             });
@@ -264,6 +268,10 @@ describe('nsqlCache.keys', () => {
             cacheManager.set(keyToString(key2), entity2);
 
             sinon.stub(methods, 'fetchHandler').resolves([entity3]);
+            const { primeCache } = cache;
+            sinon.stub(cache, 'primeCache').callsFake(
+                (...args) => primeCache.call(cache, ...args).then(() => 'OK') // simulate response from Redis "OK"
+            );
 
             return cache.keys.read([key1, key2, key3], methods.fetchHandler).then(results => {
                 expect(methods.fetchHandler.called).equal(true);
