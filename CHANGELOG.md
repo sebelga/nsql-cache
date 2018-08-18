@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.1.3"></a>
+## [1.1.3](https://github.com/sebelga/nsql-cache/compare/v1.1.2...v1.1.3) (2018-08-18)
+
+
+### Bug Fixes
+
+* **chore:** Remove implementations specific to Google Datastore ([01d9750](https://github.com/sebelga/nsql-cache/commit/01d9750))
+
+
+
 <a name="1.1.2"></a>
 ## [1.1.2](https://github.com/sebelga/nsql-cache/compare/v1.1.1...v1.1.2) (2018-08-07)
 
