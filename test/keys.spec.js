@@ -83,7 +83,7 @@ describe('nsqlCache.keys', () => {
         });
 
         it('should get entity from fetchHandler (2)', () => {
-            sinon.stub(methods, 'fetchHandler').resolves([[entity1, entity2]]);
+            sinon.stub(methods, 'fetchHandler').resolves([entity1, entity2]);
 
             return cache.keys.read([key1, key2], methods.fetchHandler).then(result => {
                 expect(methods.fetchHandler.called).equal(true);
@@ -113,7 +113,7 @@ describe('nsqlCache.keys', () => {
         });
 
         it('should maintain the order of the keys passed (1)', () => {
-            sinon.stub(cache.db, 'getEntity').resolves([[entity2, entity1]]);
+            sinon.stub(cache.db, 'getEntity').resolves([entity2, entity1]);
 
             return cache.keys.read([key1, key2]).then(result => {
                 expect(result[0].name).equal('John');
@@ -129,7 +129,7 @@ describe('nsqlCache.keys', () => {
 
         it('should maintain the order of the keys passed (2)', () => {
             cacheManager.set(keyToString(key1), entity1);
-            sinon.stub(cache.db, 'getEntity').resolves([[entity3, entity2]]);
+            sinon.stub(cache.db, 'getEntity').resolves([entity3, entity2]);
 
             return cache.keys.read([key1, key2, key3]).then(result => {
                 expect(result[0].name).equal('John');
@@ -150,7 +150,7 @@ describe('nsqlCache.keys', () => {
         it('should maintain the order of the keys passed (3)', () => {
             cacheManager.set(keyToString(key1), entity1);
             const e = { __key: { id: 1234 } };
-            sinon.stub(cache.db, 'getEntity').resolves([[undefined, e]]);
+            sinon.stub(cache.db, 'getEntity').resolves([undefined, e]);
 
             return cache.keys.read([key1, key2, key3]).then(result => {
                 expect(result[0].name).equal('John');
@@ -253,7 +253,7 @@ describe('nsqlCache.keys', () => {
         });
 
         it('should prime the cache after fetch', () => {
-            sinon.stub(methods, 'fetchHandler').resolves([[entity1, entity2]]);
+            sinon.stub(methods, 'fetchHandler').resolves([entity1, entity2]);
 
             return cache.keys.read([key1, key2], methods.fetchHandler).then(() =>
                 cacheManager.mget(keyToString(key1), keyToString(key2)).then(results => {
