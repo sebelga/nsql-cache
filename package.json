@@ -1,6 +1,6 @@
 {
   "name": "nsql-cache",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "description": "Advanced cache layer for NoSQL databases",
   "main": "index.js",
   "scripts": {
