@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.1.5"></a>
+## [1.1.5](https://github.com/sebelga/nsql-cache/compare/v1.1.4...v1.1.5) (2019-10-24)
+
+
+### Bug Fixes
+
+* **keys.read():** Add keys to entities after reading from cache ([#6](https://github.com/sebelga/nsql-cache/issues/6)) ([0bcb035](https://github.com/sebelga/nsql-cache/commit/0bcb035))
+
+
+
 <a name="1.1.4"></a>
 ## [1.1.4](https://github.com/sebelga/nsql-cache/compare/v1.1.3...v1.1.4) (2018-08-26)
 
